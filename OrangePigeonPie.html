@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orange Pigeon Pie</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Space Mono for retro-tech headers, Inter for readable body -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Tailwind Config & Custom Styles -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            500: '#ff6600', // Vibrant Orange
+                            600: '#e65c00',
+                            900: '#4a1e00',
+                        },
+                        dark: {
+                            900: '#0a0a0a',
+                            800: '#141414',
+                            700: '#262626',
+                        }
+                    },
+                    fontFamily: {
+                        mono: ['"Space Mono"', 'monospace'],
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    backgroundImage: {
+                        'grid-pattern': "linear-gradient(to right, #262626 1px, transparent 1px), linear-gradient(to bottom, #262626 1px, transparent 1px)",
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Retro CRT Scanline Effect */
+        .scanlines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            background-size: 100% 4px, 3px 100%;
+            pointer-events: none;
+            z-index: 50;
+            opacity: 0.15;
+        }
+
+        /* Glowing text utilities */
+        .text-glow {
+            text-shadow: 0 0 15px rgba(255, 102, 0, 0.6);
+        }
+        
+        .box-glow:hover {
+            box-shadow: 0 0 20px rgba(255, 102, 0, 0.3);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0a0a0a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #ff6600;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #e65c00;
+        }
+    </style>
+</head>
+<body class="bg-dark-900 text-gray-300 font-sans antialiased overflow-x-hidden relative selection:bg-brand-500 selection:text-white">
+
+    <!-- Subtle Scanline Overlay -->
+    <div class="scanlines"></div>
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-40 bg-dark-900/90 backdrop-blur-md border-b border-dark-700 transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <!-- Logo -->
+                <div class="flex-shrink-0 flex items-center gap-3 cursor-pointer" onclick="window.scrollTo(0,0)">
+                    <div class="w-10 h-10 rounded-lg bg-brand-500 flex items-center justify-center text-dark-900">
+                        <i data-lucide="phone-call" class="w-6 h-6"></i>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="font-mono font-bold text-xl text-white tracking-tight leading-none mb-1">Orange<span class="text-brand-500">PigeonPie</span></span>
+                        <span class="font-mono text-[10px] text-gray-400 uppercase tracking-wider leading-none">a PayFoneMap service</span>
+                    </div>
+                </div>
+                
+                <!-- Desktop Menu -->
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-8">
+                        <a href="#home" class="hover:text-brand-500 text-white px-3 py-2 rounded-md text-sm font-mono font-bold transition-colors">Home</a>
+                        <a href="#about" class="hover:text-brand-500 text-gray-300 px-3 py-2 rounded-md text-sm font-mono font-bold transition-colors">Mission</a>
+                        <a href="javascript:void(0)" onclick="openGameModal()" class="hover:text-brand-500 text-gray-300 px-3 py-2 rounded-md text-sm font-mono font-bold transition-colors">Play</a>
+                    </div>
+                </div>
+
+                <!-- Mobile menu button -->
+                <div class="-mr-2 flex md:hidden">
+                    <button type="button" id="mobile-menu-btn" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-dark-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-dark-800 focus:ring-white">
+                        <span class="sr-only">Open main menu</span>
+                        <i data-lucide="menu" class="block h-6 w-6"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div class="md:hidden hidden bg-dark-800 border-b border-dark-700 absolute w-full" id="mobile-menu">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="#home" class="hover:bg-dark-700 text-white block px-3 py-2 rounded-md text-base font-mono font-bold">Home</a>
+                <a href="#about" class="hover:bg-dark-700 text-gray-300 block px-3 py-2 rounded-md text-base font-mono font-bold">Mission</a>
+                <a href="javascript:void(0)" onclick="openGameModal()" class="hover:bg-dark-700 text-gray-300 block px-3 py-2 rounded-md text-base font-mono font-bold">Play</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden min-h-screen flex items-center">
+        <!-- Background decorative elements -->
+        <div class="absolute inset-0 bg-grid-pattern bg-[length:40px_40px] opacity-20"></div>
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-brand-500/20 rounded-full blur-[120px] pointer-events-none"></div>
+
+        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 z-10">
+            <div class="text-center max-w-4xl mx-auto">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-900/50 border border-brand-500/30 text-brand-500 font-mono text-sm mb-6">
+                    <span class="w-2 h-2 rounded-full bg-brand-500 animate-pulse"></span>
+                    System Online
+                </div>
+                <h1 class="text-5xl md:text-7xl font-mono font-bold text-white mb-2 tracking-tighter uppercase text-glow">
+                    Orange<br/><span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-500 to-brand-600">PigeonPie</span>
+                </h1>
+                <p class="text-lg md:text-xl font-mono text-brand-500 mb-8 uppercase tracking-widest font-semibold">
+                    a PayFoneMap service
+                </p>
+                <p class="mt-4 text-xl text-gray-400 mb-10 leading-relaxed">
+                    The ultimate destination for those who appreciate the legacy, artistry, and intrigue of payphones in the digital age. Here, the past meets the present in a space built for explorers, collectors, and modern-day phreakers alike.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <button onclick="openGameModal()" class="px-8 py-4 bg-brand-500 hover:bg-brand-600 text-dark-900 font-mono font-bold rounded-lg transition-all transform hover:-translate-y-1 flex items-center justify-center gap-2">
+                        <i data-lucide="gamepad-2" class="w-5 h-5"></i>
+                        Play
+                    </button>
+                    <a href="#contribute" class="px-8 py-4 bg-dark-800 border border-dark-700 hover:border-brand-500 text-white font-mono font-bold rounded-lg transition-all transform hover:-translate-y-1 flex items-center justify-center gap-2">
+                        <i data-lucide="info" class="w-5 h-5"></i>
+                        Learn More
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Welcome / About Section -->
+    <section id="about" class="py-24 bg-dark-800 border-y border-dark-700 relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                
+                <!-- Left Content -->
+                <div>
+                    <h2 class="text-3xl md:text-4xl font-mono font-bold text-white mb-6">A Living Archive of Connection</h2>
+                    <div class="space-y-6 text-gray-400 text-lg leading-relaxed">
+                        <p>
+                            Wander through our updates, where we share stories and insights that keep the spirit of telephony alive in a world that’s all but gone wireless. Each entry captures a small piece of urban history, ensuring these relics of connection are never fully forgotten.
+                        </p>
+                        <p>
+                            Whether you’re here to contribute, reminisce, or simply discover something new, The Phreak Portal offers a slice of heaven for anyone who still feels that unmistakable thrill of hearing a dial tone. It’s not just a website — it’s a living archive of connection, curiosity, and culture.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Right Feature Cards -->
+                <div class="grid gap-6">
+                    <div class="bg-dark-900 p-8 rounded-xl border border-dark-700 box-glow transition-all">
+                        <div class="w-12 h-12 bg-brand-900/50 rounded-lg flex items-center justify-center mb-6 border border-brand-500/20">
+                            <i data-lucide="radio" class="text-brand-500 w-6 h-6"></i>
+                        </div>
+                        <h3 class="text-xl font-mono font-bold text-white mb-3">How we are trying to keep payphones a thing?</h3>
+                        <p class="text-gray-400">
+                            Payphones once connected the world — and we’re making sure they’re not forgotten. Our community maps and records every payphone still standing. From busy city streets to remote corners of the globe, we search, share, and verify each location.
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Contribute Section -->
+    <section id="contribute" class="py-24 relative overflow-hidden">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+            <i data-lucide="rss" class="w-16 h-16 text-brand-500 mx-auto mb-6 animate-pulse"></i>
+            <h2 class="text-3xl md:text-5xl font-mono font-bold text-white mb-8">How you can help us make it happen?</h2>
+            <p class="text-xl text-gray-400 mb-10 leading-relaxed">
+                Our network grows with every discovery. If you spot a payphone — whether it’s working, broken, or half-forgotten — you can help by adding it to our global map. Share the location, snap a photo, or tell us its story. Every contribution helps preserve a piece of telecom history.
+            </p>
+            <a href="http://www.payfonemap.com" target="_blank" class="inline-flex items-center gap-3 px-8 py-4 bg-brand-500 hover:bg-brand-600 text-dark-900 font-mono font-bold rounded-lg transition-all text-lg">
+                <i data-lucide="map-pin" class="w-5 h-5"></i>
+                Map a Payphone Now
+            </a>
+        </div>
+    </section>
+
+    <!-- Game Modal -->
+    <div id="game-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black/90 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300">
+        <button onclick="closeGameModal()" class="absolute top-6 right-6 text-white hover:text-brand-500 transition-colors z-[60]">
+            <i data-lucide="x" class="w-10 h-10"></i>
+        </button>
+        <div class="relative w-full max-w-md mx-auto p-4 scale-95 transition-transform duration-300" id="game-modal-content" style="height: 90vh; max-height: 600px;">
+            <iframe id="game-iframe" class="w-full h-full border-0 rounded-2xl bg-transparent shadow-2xl"></iframe>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark-900 border-t border-dark-700 pt-16 pb-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 mb-12">
+                
+                <div class="col-span-1 md:col-span-1">
+                    <div class="flex items-center gap-2 mb-4">
+                        <i data-lucide="phone-call" class="w-8 h-8 text-brand-500"></i>
+                        <div class="flex flex-col">
+                            <span class="font-mono font-bold text-lg text-white leading-none mb-1">OrangePigeonPie</span>
+                            <span class="font-mono text-[10px] text-brand-500 uppercase tracking-wider leading-none">a PayFoneMap service</span>
+                        </div>
+                    </div>
+                    <p class="text-gray-500 text-sm mb-4">
+                        A project by Orange Pigeon Pie.<br/> Keeping the spirit of telephony alive in a wireless world.
+                    </p>
+                </div>
+
+                <div>
+                    <h4 class="font-mono font-bold text-white mb-4">Navigation</h4>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><a href="#home" class="hover:text-brand-500 transition-colors">Home</a></li>
+                        <li><a href="#about" class="hover:text-brand-500 transition-colors">Our Mission</a></li>
+                        <li><a href="javascript:void(0)" onclick="openGameModal()" class="hover:text-brand-500 transition-colors">Play</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-dark-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+                <p class="text-gray-600 text-sm font-mono">
+                    &copy; <script>document.write(new Date().getFullYear())</script> PayFoneMap.com - All rights reserved
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Initialize Icons and Scripts -->
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // Mobile menu toggle
+        const btn = document.getElementById('mobile-menu-btn');
+        const menu = document.getElementById('mobile-menu');
+
+        btn.addEventListener('click', () => {
+            menu.classList.toggle('hidden');
+        });
+
+        // Close mobile menu on click
+        const mobileLinks = menu.querySelectorAll('a');
+        mobileLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                menu.classList.add('hidden');
+            });
+        });
+
+        // Navbar style on scroll
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('navbar');
+            if (window.scrollY > 20) {
+                nav.classList.add('shadow-lg', 'shadow-brand-500/5');
+            } else {
+                nav.classList.remove('shadow-lg', 'shadow-brand-500/5');
+            }
+        });
+
+        // --- GAME MODAL LOGIC ---
+        const gameCode = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Payphone Dial Challenge</title>
+    <style>
+        /* Base and Reset */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #121212;
+            background-image: radial-gradient(circle at center, #2a2a2a 0%, #121212 100%);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            overflow: hidden;
+        }
+
+        /* Payphone Container */
+        .payphone-body {
+            background: linear-gradient(135deg, #e67e22 0%, #b83b00 100%);
+            width: 100%;
+            max-width: 320px;
+            padding: 15px;
+            border-radius: 20px;
+            box-shadow: 
+                0 20px 50px rgba(0,0,0,0.8),
+                inset 0 2px 2px rgba(255,255,255,0.4),
+                inset 0 -5px 15px rgba(0,0,0,0.5);
+            border: 2px solid #8a2a00;
+        }
+
+        /* Top Display Section */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 2px dashed rgba(255, 255, 255, 0.3);
+        }
+
+        .title {
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: #ffffff;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+
+        .score-box {
+            background: #111;
+            padding: 4px 8px;
+            border-radius: 8px;
+            font-size: 1rem;
+            color: #ff9f43;
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: bold;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.8);
+            border: 1px solid #ff9f43;
+        }
+
+        .target-box {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .target-label {
+            font-size: 0.9rem;
+            color: #ffcc99;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .target-number {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 0 0 10px rgba(255,255,255,0.3);
+            letter-spacing: 3px;
+        }
+
+        /* LCD Screen */
+        .lcd-bezel {
+            background: #111;
+            padding: 8px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            box-shadow: inset 0 5px 15px rgba(0,0,0,0.9), 0 2px 0 rgba(255,255,255,0.1);
+        }
+
+        .lcd-screen {
+            background-color: #2c1600;
+            background-image: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(0, 0, 0, 0.15) 2px,
+                rgba(0, 0, 0, 0.15) 4px
+            );
+            height: 50px;
+            border-radius: 6px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: inset 0 2px 8px rgba(0,0,0,0.6);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .lcd-text {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #ff9f43;
+            letter-spacing: 4px;
+            text-shadow: 0 0 5px rgba(255,159,67,0.5);
+            transition: color 0.2s;
+        }
+
+        .lcd-text.blink {
+            animation: blinker 1s linear infinite;
+        }
+
+        @keyframes blinker {
+            50% { opacity: 0; }
+        }
+
+        /* Keypad Grid */
+        .keypad {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            padding: 8px;
+            background: #1d2126;
+            border-radius: 15px;
+            box-shadow: inset 0 5px 15px rgba(0,0,0,0.5);
+            border: 1px solid #2a3036;
+        }
+
+        /* Keys */
+        .key {
+            background: linear-gradient(180deg, #e0e5ec 0%, #b8c0c8 100%);
+            border: none;
+            border-radius: 10px;
+            height: 50px;
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #2c3e50;
+            cursor: pointer;
+            box-shadow: 
+                0 6px 0 #7b848c,
+                0 10px 10px rgba(0,0,0,0.4),
+                inset 0 2px 2px rgba(255,255,255,0.8);
+            transition: all 0.1s;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            outline: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .key-letters {
+            font-size: 0.5rem;
+            color: #7f8c8d;
+            letter-spacing: 1px;
+            margin-top: 2px;
+        }
+
+        .key:active {
+            transform: translateY(6px);
+            box-shadow: 
+                0 0px 0 #7b848c,
+                0 2px 5px rgba(0,0,0,0.4),
+                inset 0 4px 6px rgba(0,0,0,0.2);
+        }
+
+        /* Special Keys */
+        .key.backspace {
+            background: linear-gradient(180deg, #ff7675 0%, #d63031 100%);
+            color: white;
+            box-shadow: 0 6px 0 #a91b1c, 0 10px 10px rgba(0,0,0,0.4), inset 0 2px 2px rgba(255,255,255,0.4);
+        }
+        .key.backspace:active {
+            box-shadow: 0 0px 0 #a91b1c, 0 2px 5px rgba(0,0,0,0.4), inset 0 4px 6px rgba(0,0,0,0.2);
+        }
+
+        .key.call {
+            background: linear-gradient(180deg, #55efc4 0%, #00b894 100%);
+            color: white;
+            box-shadow: 0 6px 0 #008a6f, 0 10px 10px rgba(0,0,0,0.4), inset 0 2px 2px rgba(255,255,255,0.4);
+        }
+        .key.call:active {
+            box-shadow: 0 0px 0 #008a6f, 0 2px 5px rgba(0,0,0,0.4), inset 0 4px 6px rgba(0,0,0,0.2);
+        }
+
+        /* Feedback Colors */
+        .lcd-text.success {
+            color: #4cd137;
+            text-shadow: 0 0 5px rgba(76, 209, 55, 0.5);
+        }
+        .lcd-text.error {
+            color: #e84118;
+            text-shadow: 0 0 5px rgba(232, 65, 24, 0.5);
+        }
+
+        /* Status LED */
+        .status-led {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: #444;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+            transition: background-color 0.3s;
+        }
+        .status-led.on {
+            background-color: #e74c3c;
+            box-shadow: 0 0 10px #e74c3c, inset 0 2px 4px rgba(255,255,255,0.5);
+        }
+        .status-led.connected {
+            background-color: #2ecc71;
+            box-shadow: 0 0 10px #2ecc71, inset 0 2px 4px rgba(255,255,255,0.5);
+        }
+
+        /* Credit Footer */
+        .credit {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 0.65rem;
+            color: rgba(255, 255, 255, 0.7);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        .credit a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .credit a:hover {
+            text-decoration: underline;
+            color: #ffcc99;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="payphone-body">
+        <!-- Header & Score -->
+        <div class="header">
+            <div class="status-led" id="led"></div>
+            <div class="title">Phreak Mobility</div>
+            <div class="score-box">SCORE: <span id="score">0</span></div>
+        </div>
+
+        <!-- Target Display -->
+        <div class="target-box">
+            <div class="target-label">Please Dial</div>
+            <div class="target-number" id="target-display">000-0000</div>
+        </div>
+
+        <!-- LCD Screen -->
+        <div class="lcd-bezel">
+            <div class="lcd-screen">
+                <div class="lcd-text blink" id="lcd-display">_</div>
+            </div>
+        </div>
+
+        <!-- Keypad -->
+        <div class="keypad">
+            <button class="key" data-val="1">1<span class="key-letters"></span></button>
+            <button class="key" data-val="2">2<span class="key-letters">ABC</span></button>
+            <button class="key" data-val="3">3<span class="key-letters">DEF</span></button>
+            
+            <button class="key" data-val="4">4<span class="key-letters">GHI</span></button>
+            <button class="key" data-val="5">5<span class="key-letters">JKL</span></button>
+            <button class="key" data-val="6">6<span class="key-letters">MNO</span></button>
+            
+            <button class="key" data-val="7">7<span class="key-letters">PQRS</span></button>
+            <button class="key" data-val="8">8<span class="key-letters">TUV</span></button>
+            <button class="key" data-val="9">9<span class="key-letters">WXYZ</span></button>
+            
+            <button class="key backspace" id="btn-back">⌫</button>
+            <button class="key" data-val="0">0<span class="key-letters">+</span></button>
+            <button class="key call" id="btn-call">📞</button>
+        </div>
+
+        <!-- Credit Footer -->
+        <div class="credit">Developed by PayFoneMap</div>
+    </div>
+
+    <script>
+        // Game State
+        let targetNumberRaw = '';
+        let currentInput = '';
+        let score = 0;
+        let isProcessing = false;
+
+        // DOM Elements
+        const targetDisplay = document.getElementById('target-display');
+        const lcdDisplay = document.getElementById('lcd-display');
+        const scoreDisplay = document.getElementById('score');
+        const led = document.getElementById('led');
+        const keys = document.querySelectorAll('.key');
+
+        // Audio Context (Initialized on first interaction)
+        let audioCtx;
+
+        // Standard DTMF Frequencies for authenticity!
+        const dtmfFrequencies = {
+            '1': [697, 1209], '2': [697, 1336], '3': [697, 1477],
+            '4': [770, 1209], '5': [770, 1336], '6': [770, 1477],
+            '7': [852, 1209], '8': [852, 1336], '9': [852, 1477],
+            '*': [941, 1209], '0': [941, 1336], '#': [941, 1477]
+        };
+
+        // Initialize Game
+        function initGame() {
+            generateNewNumber();
+            setupEventListeners();
+        }
+
+        // Generate Random 7-Digit Number
+        function generateNewNumber() {
+            const part1 = Math.floor(Math.random() * 900) + 100; // 100-999
+            const part2 = Math.floor(Math.random() * 10000).toString().padStart(4, '0'); // 0000-9999
+            
+            targetNumberRaw = \`\${part1}\${part2}\`;
+            targetDisplay.innerText = \`\${part1}-\${part2}\`;
+            
+            currentInput = '';
+            updateLCD();
+            led.className = 'status-led on';
+        }
+
+        // Format LCD Display text
+        function updateLCD(message = null) {
+            if (message) {
+                lcdDisplay.innerText = message;
+                lcdDisplay.classList.remove('blink');
+                return;
+            }
+
+            if (currentInput.length === 0) {
+                lcdDisplay.innerText = '_';
+                lcdDisplay.classList.add('blink');
+                lcdDisplay.className = 'lcd-text blink';
+            } else {
+                lcdDisplay.classList.remove('blink');
+                lcdDisplay.className = 'lcd-text';
+                
+                // Format with hyphen dynamically
+                let formatted = currentInput;
+                if (formatted.length > 3) {
+                    formatted = formatted.substring(0, 3) + '-' + formatted.substring(3);
+                }
+                
+                // Add blinking cursor if not full
+                if (currentInput.length < 7) {
+                    lcdDisplay.innerHTML = formatted + '<span class="blink">_</span>';
+                } else {
+                    lcdDisplay.innerText = formatted;
+                }
+            }
+        }
+
+        // Handle Key Presses
+        function handleKeyPress(val) {
+            if (isProcessing) return;
+
+            initAudioContext();
+            
+            if (val >= '0' && val <= '9') {
+                if (currentInput.length < 7) {
+                    currentInput += val;
+                    playDTMF(val);
+                    updateLCD();
+                } else {
+                    playErrorTone(); // Boop if trying to type too many digits
+                }
+            }
+        }
+
+        // Handle Backspace
+        function handleBackspace() {
+            if (isProcessing || currentInput.length === 0) return;
+            initAudioContext();
+            
+            currentInput = currentInput.slice(0, -1);
+            playDTMF('*'); // Using * frequency for backspace
+            updateLCD();
+        }
+
+        // Handle Call Action
+        function handleCall() {
+            if (isProcessing || currentInput.length === 0) return;
+            initAudioContext();
+            
+            isProcessing = true;
+            playDTMF('#'); // Using # frequency for call
+
+            // Briefly show dialing...
+            updateLCD('DIALING..');
+            
+            setTimeout(() => {
+                if (currentInput === targetNumberRaw) {
+                    // Success
+                    score++;
+                    scoreDisplay.innerText = score;
+                    lcdDisplay.className = 'lcd-text success';
+                    updateLCD('CONNECTED');
+                    led.className = 'status-led connected';
+                    playSuccessSound();
+
+                    setTimeout(() => {
+                        isProcessing = false;
+                        generateNewNumber();
+                    }, 1500);
+
+                } else {
+                    // Fail
+                    lcdDisplay.className = 'lcd-text error';
+                    updateLCD('WRONG NUM');
+                    led.className = 'status-led'; // Turn off led
+                    playErrorSound();
+
+                    setTimeout(() => {
+                        currentInput = '';
+                        isProcessing = false;
+                        led.className = 'status-led on';
+                        updateLCD();
+                    }, 1500);
+                }
+            }, 600);
+        }
+
+        // Event Listeners
+        function setupEventListeners() {
+            // Mouse/Touch clicks
+            keys.forEach(key => {
+                key.addEventListener('mousedown', (e) => {
+                    const val = key.getAttribute('data-val');
+                    if (val) handleKeyPress(val);
+                    else if (key.id === 'btn-back') handleBackspace();
+                    else if (key.id === 'btn-call') handleCall();
+                });
+                
+                // For touch devices
+                key.addEventListener('touchstart', (e) => {
+                    e.preventDefault(); // Prevent double firing
+                    const val = key.getAttribute('data-val');
+                    if (val) handleKeyPress(val);
+                    else if (key.id === 'btn-back') handleBackspace();
+                    else if (key.id === 'btn-call') handleCall();
+                    
+                    // Manually trigger active state styling for touch
+                    key.style.transform = 'translateY(6px)';
+                    setTimeout(() => { key.style.transform = ''; }, 100);
+                }, {passive: false});
+            });
+
+            // Keyboard support
+            window.addEventListener('keydown', (e) => {
+                if (e.key >= '0' && e.key <= '9') {
+                    // Visual feedback for keyboard press
+                    const btn = document.querySelector(\`[data-val="\${e.key}"]\`);
+                    if(btn) {
+                        btn.style.transform = 'translateY(6px)';
+                        setTimeout(() => { btn.style.transform = ''; }, 100);
+                    }
+                    handleKeyPress(e.key);
+                } else if (e.key === 'Backspace') {
+                    const btn = document.getElementById('btn-back');
+                    btn.style.transform = 'translateY(6px)';
+                    setTimeout(() => { btn.style.transform = ''; }, 100);
+                    handleBackspace();
+                } else if (e.key === 'Enter') {
+                    const btn = document.getElementById('btn-call');
+                    btn.style.transform = 'translateY(6px)';
+                    setTimeout(() => { btn.style.transform = ''; }, 100);
+                    handleCall();
+                }
+            });
+        }
+
+        /* --- Audio Synthesis Engine --- */
+        
+        function initAudioContext() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        function playDTMF(key) {
+            if (!audioCtx) return;
+            const freqs = dtmfFrequencies[key];
+            if (!freqs) return;
+
+            const osc1 = audioCtx.createOscillator();
+            const osc2 = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+
+            osc1.type = 'sine';
+            osc2.type = 'sine';
+            osc1.frequency.value = freqs[0];
+            osc2.frequency.value = freqs[1];
+
+            osc1.connect(gainNode);
+            osc2.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+
+            // Envelope to prevent clicking
+            gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+            gainNode.gain.linearRampToValueAtTime(0.2, audioCtx.currentTime + 0.02);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.15);
+
+            osc1.start();
+            osc2.start();
+            osc1.stop(audioCtx.currentTime + 0.2);
+            osc2.stop(audioCtx.currentTime + 0.2);
+        }
+
+        function playErrorTone() {
+            if (!audioCtx) return;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'square';
+            osc.frequency.value = 150;
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            
+            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
+            
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.1);
+        }
+
+        function playSuccessSound() {
+            if (!audioCtx) return;
+            // A happy little coin-insert/connection chime
+            const freqs = [880, 1108, 1318, 1760]; // A5, C#6, E6, A6
+            let startTime = audioCtx.currentTime;
+
+            freqs.forEach((freq, i) => {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.value = freq;
+                
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                
+                gain.gain.setValueAtTime(0, startTime + (i * 0.1));
+                gain.gain.linearRampToValueAtTime(0.1, startTime + (i * 0.1) + 0.02);
+                gain.gain.exponentialRampToValueAtTime(0.001, startTime + (i * 0.1) + 0.3);
+                
+                osc.start(startTime + (i * 0.1));
+                osc.stop(startTime + (i * 0.1) + 0.3);
+            });
+        }
+
+        function playErrorSound() {
+            if (!audioCtx) return;
+            // The dreaded operator disconnect sound
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'sawtooth';
+            osc.frequency.value = 200;
+            
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            
+            gain.gain.setValueAtTime(0, audioCtx.currentTime);
+            gain.gain.linearRampToValueAtTime(0.15, audioCtx.currentTime + 0.05);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.6);
+            
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.6);
+        }
+
+        // Start the game!
+        window.onload = initGame;
+
+    <\/script>
+</body>
+</html>`;
+
+        function openGameModal() {
+            const modal = document.getElementById('game-modal');
+            const iframe = document.getElementById('game-iframe');
+            const content = document.getElementById('game-modal-content');
+            
+            // Set the exact HTML content to load inside the Iframe seamlessly
+            iframe.srcdoc = gameCode;
+            
+            // Display & Animate Opening
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden'; // Stop page scrolling behind modal
+            
+            // Small delay to allow the element to become `display: flex` before transitioning opacity
+            requestAnimationFrame(() => {
+                modal.classList.remove('opacity-0', 'pointer-events-none');
+                content.classList.remove('scale-95');
+                content.classList.add('scale-100');
+            });
+        }
+
+        function closeGameModal() {
+            const modal = document.getElementById('game-modal');
+            const iframe = document.getElementById('game-iframe');
+            const content = document.getElementById('game-modal-content');
+            
+            // Animate Closing
+            modal.classList.add('opacity-0', 'pointer-events-none');
+            content.classList.remove('scale-100');
+            content.classList.add('scale-95');
+            
+            // Cleanup after animation finishes
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                iframe.srcdoc = ''; // This unmounts the game and destroys the audio context logic instantly
+                document.body.style.overflow = '';
+            }, 300);
+        }
+    </script>
+</body>
+</html>
